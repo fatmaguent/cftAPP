@@ -4,6 +4,7 @@ from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
     def _create_user(self, name, password, **extra_fields):
+        """Helper function to create and save a user with the given name and password."""
         if not name:
             raise ValueError("The given name must be set")
 
@@ -12,18 +13,20 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
-    def create_user(self, name=None, password=None, **extra_fields):
+    def create_user(self, name, password, **extra_fields):
+        """Creates and saves a regular user with the given name and password."""
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(name, password, **extra_fields)
     
     def create_superuser(self, name, password, **extra_fields):
+        """Creates and saves a superuser with the given name and password."""
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
-        if extra_fields.get('is_staff') is not True:
+        if not extra_fields.get('is_staff'):
             raise ValueError('Superuser must have is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
+        if not extra_fields.get('is_superuser'):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self._create_user(name, password, **extra_fields)
@@ -39,15 +42,19 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'name'
-    REQUIRED_FIELDS = []  # You can add required fields here other than 'name' and 'password'
+    REQUIRED_FIELDS = []  # List fields required during user creation other than 'name' and 'password'
 
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
     
     def get_full_name(self):
+        """Returns the full name of the user."""
         return self.name
     
     def get_short_name(self):
+        """Returns the short name of the user."""
         return self.name
+    
+#################################################################################
 
