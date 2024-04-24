@@ -52,9 +52,9 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'CFTdatabase',
         'USER': 'postgres',
-        'PASSWORD': 'cft',
+        'PASSWORD': 'SopraHR2024++',
         'HOST': 'localhost',
         'PORT': '5432',
     }
