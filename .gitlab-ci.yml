@@ -1,26 +1,42 @@
 # .gitlab-ci.yml
 
-# Définir les étapes du pipeline
+# Define the stages of the pipeline
 stages:
   - build
   - test
 
-# Définir les variables globales pour la configuration de PostgreSQL
+# Define global variables for PostgreSQL configuration
 variables:
   POSTGRES_DB: "CFTdatabase"
   POSTGRES_USER: "postgres"
   POSTGRES_PASSWORD: "SopraHR2024++"
 
-# Définir les travaux individuels pour le pipeline
-# Chaque travail appartient à une étape spécifique et exécute un ensemble de scripts
+# Define services used by the pipeline
+services:
+  - name: postgres:latest
+    alias: postgres
+
+# Define scripts to be executed before each job
+before_script:
+  # Install Python dependencies and set up virtual environment
+  - python -m venv venv
+  - venv\Scripts\activate
+  - pip install -r requirements.txt
+
+# Define individual jobs for the pipeline
+# Each job belongs to a specific stage and executes a set of scripts
 build:
   stage: build
   script:
-    - pip install -r C:\Users\fguent\cft\requirements.txt   # Installer les dépendances du projet répertoriées dans requirements.txt
-    - python manage.py migrate  # Exécuter les migrations de base de données
+    - python manage.py migrate
+    # Add additional build steps if needed
+  only:
+    - main
 
 test:
   stage: test
   script:
-    - pip install -r C:\Users\fguent\cft\requirements.txt  # Installer les dépendances du projet répertoriées dans requirements.txt
-    - python manage.py test  # Exécuter les tests Django
+    - python manage.py test
+    # Add additional test steps if needed
+  only:
+    - main
