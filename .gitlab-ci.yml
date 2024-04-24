@@ -9,21 +9,22 @@ variables:
   POSTGRES_USER: "postgres"
   POSTGRES_PASSWORD: "SopraHR2024++"
 
-# Define services to be used by the pipeline
 services:
-  - name: postgres:latest
+  - postgres:latest
 
-# Define scripts to be executed before each job
+# Install Python and required packages
 before_script:
-  - apk add --no-cache python3 py3-pip  # Install Python and pip
-  - python3 -m venv venv                # Create a virtual environment
-  - source venv/bin/activate            # Activate the virtual environment
-  - pip install -r requirements.txt     # Install project dependencies
+  - apk add --no-cache python3 py3-pip
+  - pip3 install virtualenv
 
 # Define individual jobs for the pipeline
+# Each job belongs to a specific stage and executes a set of scripts
 build:
   stage: build
   script:
+    - python3 -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
     - python manage.py migrate
   only:
     - backend
@@ -31,6 +32,7 @@ build:
 test:
   stage: test
   script:
+    - source venv/bin/activate
     - python manage.py test
   only:
     - backend
