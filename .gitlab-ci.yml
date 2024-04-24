@@ -13,10 +13,9 @@ variables:
 
 # Scripts à exécuter avant chaque job
 before_script:
-  - apt-get update -y && apt-get install -y python3-pip python3-dev
-  - pip3 install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
+ - pip install virtualenv  # Install virtualenv for creating isolated Python environments
+ - virtualenv venv  # Create a virtual environment named "venv"
+- source venv/bin/activate  # Activate the virtual environment
 
 # Définir les jobs individuels pour le pipeline
 # Chaque job appartient à une étape spécifique et exécute un ensemble de scripts
