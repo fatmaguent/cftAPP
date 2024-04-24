@@ -31,7 +31,7 @@ build:
     - pip install -r requirements.txt
     - python manage.py migrate
   only:
-    - main
+    - backend
 
 test:
   stage: test
@@ -41,4 +41,4 @@ test:
     - pip install -r requirements.txt
     - python manage.py test
   only:
-    - main
+    - backend
