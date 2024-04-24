@@ -1,0 +1,31 @@
+stages:
+  - build
+  - test
+
+variables:
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: cft
+
+services:
+  - postgres:latest
+
+before_script:
+  - apt-get update -y && apt-get install -y python3-pip python3-dev
+  - pip3 install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+build:
+  stage: build
+  script:
+    - python manage.py migrate
+  only:
+    - main
+
+test:
+  stage: test
+  script:
+    - python manage.py test
+  only:
+    - main
