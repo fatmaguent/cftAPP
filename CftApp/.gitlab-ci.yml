@@ -3,9 +3,9 @@ stages:
   - test
 
 variables:
-  POSTGRES_DB: postgres
+  POSTGRES_DB: CFTdatabase
   POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: cft
+  POSTGRES_PASSWORD: SopraHR2024++
 
 services:
   - postgres:latest
