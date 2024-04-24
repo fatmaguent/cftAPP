@@ -23,6 +23,6 @@ before_script:
 build:
   stage: build
   script:
-    - pip install -r requirements.txt
     - python manage.py migrate
-
+  only:
+    - backend
