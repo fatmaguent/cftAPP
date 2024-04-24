@@ -13,10 +13,8 @@ services:
   - postgres:latest
 
 before_script:
-  - apt-get update -y && apt-get install -y python3-pip python3-dev
-  - pip3 install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
+  - python -m venv venv
+  - venv\Scripts\activate
   - pip install -r requirements.txt
 
 build:
