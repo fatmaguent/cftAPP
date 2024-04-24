@@ -1,12 +1,13 @@
+# Define the stages of the pipeline
 stages:
-  - lint
   - build
   - test
 
+# Define global variables for PostgreSQL configuration
 variables:
-  POSTGRES_DB: your_db_name
-  POSTGRES_USER: user
-  POSTGRES_PASSWORD: secure_password
+  POSTGRES_DB: "CFTdatabase"
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "SopraHR2024++"
 
 services:
   - postgres:latest
