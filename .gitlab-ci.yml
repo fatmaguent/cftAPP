@@ -31,7 +31,7 @@ build:
     - python manage.py migrate
     # Add additional build steps if needed
   only:
-    - main
+    - backend
 
 test:
   stage: test
@@ -39,4 +39,4 @@ test:
     - python manage.py test
     # Add additional test steps if needed
   only:
-    - main
+    - backend
