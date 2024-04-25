@@ -1,7 +1,5 @@
-# Define the stages of the pipeline
-stages:
-  - build
-  - test
+# Define the Docker image for the environment (Python 3.9 with PostgreSQL client)
+image: python:3.12.2
 
 # Define global variables for PostgreSQL configuration
 variables:
@@ -9,29 +7,45 @@ variables:
   POSTGRES_USER: "postgres"
   POSTGRES_PASSWORD: "SopraHR2024++"
 
-# Define services used by the pipeline
-services:
-  - name: postgres:latest
+# Define caching to speed up builds by caching Python dependencies
+cache:
+  paths:
+    - venv/  # Cache Python virtual environment
 
-# Define scripts to be executed before each job
+# Define stages for the pipeline
+stages:
+  - test
+  - deploy
+
+# Define jobs
 before_script:
-before_script:
-  - apk add --no-cache --timeout 60 python3 py3-dev # Replace py3-pip with py3-dev
-  - python3 -m venv venv
-  - source venv/bin/activate
-  - pip install -r requirements.txt
-# Define individual jobs for the pipeline
-# Each job belongs to a specific stage and executes a set of scripts
-build:
-  stage: build
-  script:
-    - python manage.py migrate
-  only:
-    - backend
+  # Install PostgreSQL client
+  - apt-get update -y && apt-get install -y postgresql-client
 
 test:
   stage: test
   script:
+    # Set up virtual environment
+    - python -m venv venv
+    - source venv/bin/activate
+    # Install dependencies
+    - pip install -r requirements.txt
+    # Run Django tests
     - python manage.py test
   only:
-    - backend
+    - branches  # Run this job for every branch except 'master'
+  except:
+    - backend 
+
+deploy:
+  stage: deploy
+  script:
+    # Set up virtual environment
+    - python -m venv venv
+    - source venv/bin/activate
+    # Install dependencies
+    - pip install -r requirements.txt
+    # Run Django migrations (sync with PostgreSQL)
+    - python manage.py migrate
+  only:
+    - backend   # Run this job only for the 'master' branch
