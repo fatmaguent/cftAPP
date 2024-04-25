@@ -17,11 +17,10 @@ stages:
   - test
   - deploy
 
+services:
+  - name: postgres:latest
 # Define jobs
 before_script:
-  # Install PostgreSQL client
-  - apt-get update -y && apt-get install -y postgresql-client
-
 test:
   stage: test
   script:
