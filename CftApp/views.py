@@ -1,4 +1,5 @@
 from django.http import JsonResponse, Http404
+from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.views.generic import View, TemplateView
@@ -20,13 +21,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-class LogoutView(View):
-    def get(self, request, *args, **kwargs):
-        logout(request)
-        return redirect('some-redirect-url')  # Remplacez 'some-redirect-url' par le nom de modèle d'URL réel
+def login_view(request):
+    return render(request, 'login.js')
 
-class HomeView(TemplateView):
-    template_name = 'home.html'
+def dashboard_view(request):
+    return render(request, 'dashboard.js')
 
 class CustomTokenObtainPairView(APIView):
     def post(self, request, *args, **kwargs):
