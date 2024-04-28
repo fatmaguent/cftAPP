@@ -5,15 +5,17 @@ stages:
 
 # Define job templates
 .default_template: &default_template
-  image: python:3.12.2  # Utiliser l'image Python 3.12.2
+  image: python:3.12.2  # Use Python 3.12.2 image
   services:
-    - name: postgres:latest  # Utiliser l'image PostgreSQL la plus récente en tant que service
+    - name: postgres:latest  # Use latest PostgreSQL image as a service
       alias: postgres
+      environment:
+        POSTGRES_PASSWORD: "SopraHR2024++"  # Provide a password for the superuser
   before_script:
-    - pip install -r requirements.txt  # Installer les dépendances Python
-    - psql -h postgres -U postgres -c "CREATE DATABASE $POSTGRES_DB;"  # Créer la base de données PostgreSQL
+    - pip install -r requirements.txt  # Install Python dependencies
+    - psql -h postgres -U postgres -c "CREATE DATABASE $POSTGRES_DB;"  # Create PostgreSQL database
   script:
-    - python manage.py test  # Exécuter les tests Django
+    - python manage.py test  # Run Django tests
 
 build:
   stage: build
