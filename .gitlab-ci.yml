@@ -1,3 +1,4 @@
+# Define stages for the pipeline
 stages:
   - build
 
@@ -12,13 +13,14 @@ stages:
         POSTGRES_USER: "postgres"
         POSTGRES_PASSWORD: "SopraHR2024++"
   before_script:
-    - pip install --default-timeout=600 --retries=5 -r requirements.txt  # Install Python dependencies with retry and timeout options
-    - python manage.py migrate
+    - apk update && apk add --no-cache postgresql-dev gcc python3-dev musl-dev  # Install PostgreSQL dependencies
+    - pip install --upgrade pip  # Upgrade pip
+    - pip install -r requirements.txt  # Install Python dependencies
+    - python manage.py migrate  # Apply database migrations
 
-build:
+    build:
   stage: build
   script:
     - python manage.py migrate
   only:
     - backend
-
