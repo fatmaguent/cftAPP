@@ -9,6 +9,10 @@ stages:
   services:
     - name: postgres:latest  # Use latest PostgreSQL image as a service
       alias: postgres
+      environment:
+        POSTGRES_DB: "CFTdatabase"
+        POSTGRES_USER: "postgres"
+        POSTGRES_PASSWORD: "SopraHR2024++"
   before_script:
     - pip install --default-timeout=600 --retries=5 -r requirements.txt  # Install Python dependencies with retry and timeout options
     - psql -h postgres -U postgres -c "CREATE DATABASE $POSTGRES_DB;"  # Create PostgreSQL database
