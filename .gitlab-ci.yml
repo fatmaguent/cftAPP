@@ -18,7 +18,8 @@ stages:
     - pip install -r requirements.txt  # Install Python dependencies
     - python manage.py migrate  # Apply database migrations
 
-    build:
+build:
+  <<: *default_template
   stage: build
   script:
     - python manage.py migrate
