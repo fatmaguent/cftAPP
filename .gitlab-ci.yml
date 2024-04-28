@@ -14,12 +14,11 @@ stages:
         POSTGRES_PASSWORD: "SopraHR2024++"
   before_script:
     - apk update && apk add --no-cache postgresql-dev gcc python3-dev musl-dev  # Install PostgreSQL dependencies
-    - python -m pip install --upgrade pip  # Upgrade pip
-    - python -m pip install -r requirements.txt  # Install Python dependencies
+    - pip install --upgrade pip  # Upgrade pip
+    - pip install -r requirements.txt  # Install Python dependencies
     - python manage.py migrate  # Apply database migrations
 
 build:
-  <<: *default_template
   stage: build
   script:
     - python manage.py migrate
