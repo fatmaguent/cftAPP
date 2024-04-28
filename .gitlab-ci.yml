@@ -24,11 +24,11 @@ build:
   script:
     - python manage.py migrate
   only:
-    - main
+    - backend
 
 test:
   stage: test
   script:
     - python manage.py test
   only:
-    - main
+    - backend
