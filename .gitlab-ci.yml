@@ -5,18 +5,19 @@ stages:
 
 # Define job templates
 .default_template: &default_template
-  image: python:3.12.2  # Use Python 3.12.2 image
+  image: python:3.12.2  # Utiliser l'image Python 3.12.2
   services:
-    - name: postgres:latest  # Use latest PostgreSQL image as a service
+    - name: postgres:latest  # Utiliser l'image PostgreSQL la plus récente en tant que service
       alias: postgres
   before_script:
-    - pip install -r requirements.txt  # Install Python dependencies
-    - psql -h postgres -U postgres -c "CREATE DATABASE $POSTGRES_DB;"  # Create PostgreSQL database
+    - pip install -r requirements.txt  # Installer les dépendances Python
+    - psql -h postgres -U postgres -c "CREATE DATABASE $POSTGRES_DB;"  # Créer la base de données PostgreSQL
   script:
-    - python manage.py test  # Run Django tests
+    - python manage.py test  # Exécuter les tests Django
 
 build:
   stage: build
+  <<: *default_template
   script:
     - python manage.py migrate
   only:
@@ -24,6 +25,7 @@ build:
 
 test:
   stage: test
+  <<: *default_template
   script:
     - python manage.py test
   only:
