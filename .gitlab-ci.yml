@@ -21,16 +21,14 @@ stages:
 
 build:
   stage: build
-  <<: *default_template
   script:
     - python manage.py migrate
   only:
-    - backend
+    - main
 
 test:
   stage: test
-  <<: *default_template
   script:
     - python manage.py test
   only:
-    - backend
+    - main
