@@ -1,7 +1,7 @@
 # Define stages for the pipeline
 stages:
+  - build
   - test
-  - deploy
 
 # Define job templates
 .default_template: &default_template
@@ -15,14 +15,16 @@ stages:
   script:
     - python manage.py test  # Run Django tests
 
-# Define jobs for each stage
+build:
+  stage: build
+  script:
+    - python manage.py migrate
+  only:
+    - main
+
 test:
   stage: test
-  <<: *default_template
-
-deploy:
-  stage: deploy
   script:
-    - echo "Deployment steps here..."  # Add deployment steps here
+    - python manage.py test
   only:
-    - backend  # Only deploy from the master branch
+    - main
