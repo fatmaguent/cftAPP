@@ -19,7 +19,7 @@ stages:
     - python manage.py migrate  # Apply database migrations
 
 build:
-
+  <<: *default_template
   stage: build
   script:
     - python manage.py migrate
