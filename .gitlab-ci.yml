@@ -1,21 +1,21 @@
+# Define stages for the pipeline
 stages:
   - build
   - test
-
-variables:
-  POSTGRES_DB: CFTdatabase
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: SopraHR2024++
-
-services:
-  - postgres:latest
-
-before_script:
-  - apt-get update -y && apt-get install -y python3-pip python3-dev
-  - pip3 install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-  - pip install -r requirements.txt
+# Define job templates
+.default_template: &default_template
+  services:
+    - name: postgres:latest  # Use latest PostgreSQL image as a service
+      alias: postgres
+      environment:
+        POSTGRES_DB: "CFTdatabase"
+        POSTGRES_USER: "postgres"
+        POSTGRES_PASSWORD: "SopraHR2024++"
+  before_script:
+    - apk update && apk add --no-cache postgresql-dev gcc python3-dev musl-dev  # Install PostgreSQL dependencies
+    - python -m pip install --upgrade pip  # Upgrade pip
+    - python -m pip install -r requirements.txt  # Install Python dependencies
+    - python manage.py migrate  # Apply database migrations
 
 build:
   stage: build
@@ -23,7 +23,6 @@ build:
     - python manage.py migrate
   only:
     - backend
-
 test:
   stage: test
   script:
