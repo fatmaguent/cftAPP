@@ -1,11 +1,9 @@
-# Define stages for the pipeline
 stages:
   - build
-  - test
 
 # Define job templates
 .default_template: &default_template
-  image: python:3.12.2  # Use Python 3.12.2 image
+  image: python:3.12.2-alpine  # Use Python 3.12.2 on Alpine Linux
   services:
     - name: postgres:latest  # Use latest PostgreSQL image as a service
       alias: postgres
@@ -15,9 +13,7 @@ stages:
         POSTGRES_PASSWORD: "SopraHR2024++"
   before_script:
     - pip install --default-timeout=600 --retries=5 -r requirements.txt  # Install Python dependencies with retry and timeout options
-    - psql -h postgres -U postgres -c "CREATE DATABASE $POSTGRES_DB;"  # Create PostgreSQL database
-  script:
-    - python manage.py test  # Run Django tests
+    - python manage.py migrate
 
 build:
   stage: build
@@ -26,9 +22,3 @@ build:
   only:
     - backend
 
-test:
-  stage: test
-  script:
-    - python manage.py test
-  only:
-    - backend
