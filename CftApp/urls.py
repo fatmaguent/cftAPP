@@ -1,12 +1,10 @@
+from django.contrib import admin
 from django.urls import path
 from . import views
-from .views import CustomTokenObtainPairView
-from rest_framework_simplejwt.views import TokenRefreshView
-
+from django.urls import path, include
+from rest_framework_simplejwt import views as jwt_views
 urlpatterns = [
-    path('loginUser/', views.login_view, name='loginUser'),
-    path('dashboard/', views.dashboard_view, name='dashboard'),
-    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh')
+    path('home/', views.HomeView.as_view(), name ='home'),
+     path('token/', jwt_views.TokenObtainPairView.as_view(), name ='token_obtain_pair'),
+     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name ='token_refresh'),
 ]
-

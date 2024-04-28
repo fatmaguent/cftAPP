@@ -1,45 +1,27 @@
-from django.http import JsonResponse
-from django.contrib.auth import authenticate, login
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        # Add custom claims
-        token['name'] = user.username
-        return token
+class HomeView(APIView):
+    permission_classes = (IsAuthenticated, )
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
+    def get(self, request):
+        content = {'message': 'Welcome to the JWT Authentication page using React Js and Django!'}
+        return Response(content)
 
-@csrf_exempt
-@api_view(['POST'])
-def login_view(request):
-    if request.method == 'POST':
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            refresh = RefreshToken.for_user(user)
-            return JsonResponse({
-                'access': str(refresh.access_token),
-                'refresh': str(refresh)
-            }, status=status.HTTP_200_OK)
-        else:
-            return JsonResponse({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+class LogoutView(APIView):
+    permission_classes = (IsAuthenticated,)
 
-@api_view(['GET'])
-def dashboard_view(request):
-    if request.user.is_authenticated:
-        # Logic to fetch dashboard data based on authenticated user
-        return Response({'message': 'Welcome to the dashboard!'}, status=status.HTTP_200_OK)
-    else:
-        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh_token")
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+                return Response(status=status.HTTP_205_RESET_CONTENT)
+            else:
+                return Response({"error": "Refresh token not provided."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
