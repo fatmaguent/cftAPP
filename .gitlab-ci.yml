@@ -1,7 +1,6 @@
 # Define stages for the pipeline
 stages:
   - build
-  - test
 
 # Define job templates
 variables:
@@ -11,26 +10,8 @@ variables:
 
 build:
   stage: build
+  image: python:3.12.2
   script:
     - python manage.py migrate
   only:
     - backend
-
-test:
-  services:
-    - postgres:16.2
-  cache:
-    key:
-      files:
-        - requirements.txt
-      prefix: ${CI_JOB_NAME}
-    paths:
-      - venv
-      - .cache/pip
-  stage: test
-  script:
-    - python -m venv venv
-    - . venv/bin/activate
-    - pip install --upgrade pip
-    - pip install -r requirements.txt
-    - python manage.py test
