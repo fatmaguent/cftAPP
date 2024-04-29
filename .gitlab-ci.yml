@@ -13,7 +13,6 @@ build:
   stage: build
   image: python:3.12.2
   script:
-    - pip install Django==5.0.3  # Install Django
     - python manage.py migrate
   only:
     - backend
