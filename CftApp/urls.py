@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from django.urls import path, include
 from .views import TokenObtainPairAndRefreshView, TokenRefreshView
+from .views import HomeView
 
 urlpatterns = [
     path('home/', views.HomeView.as_view(), name ='home'),
