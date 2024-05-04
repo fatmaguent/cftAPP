@@ -5,12 +5,12 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView as BaseTokenRefreshView
-from .serializers import MyTokenObtainPairSerializer  # Import your custom serializer
+from .serializers import MyTokenObtainPairSerializer  # 
 from .sap import extract_sap, extract_host, read_config_file
-
+from .certif import extract_ssl_info, extract_root_cid, read_config_file
 ######################################################################
 class HomeView(APIView):
-    permission_classes = (AllowAny,)  # Utilisez AllowAny pour autoriser l'accès sans authentification
+    permission_classes = (AllowAny,)  
 
     def get(self, request):
         config_file_path = r'C:\Users\fguent\Desktop\TESTREG\cft.cfg'
@@ -51,6 +51,56 @@ class HomeView(APIView):
                 return Response({'error': f"Le partenaire '{partner_name}' n'a pas de port SAP ou d'adresse IP associé dans le fichier de configuration."}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'error': "Impossible de continuer sans contenu de fichier de configuration."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        ######################################################################
+class CertifView(APIView):
+      permission_classes = (AllowAny,)
+
+      def get(self, request):
+        config_file_path = r'C:\Users\fguent\Desktop\TESTREG\cft.cfg'
+        partner_name = request.query_params.get('partner_name')
+
+        with open(config_file_path, 'r') as file:
+            config_content = file.read()
+        
+        ssl_info = extract_ssl_info(config_content, partner_name)
+        root_cid = extract_root_cid(config_content)
+        
+        response_data = {}
+        if ssl_info:
+            response_data['SSL_Info'] = ssl_info
+        else:
+            response_data['SSL_Info'] = "No SSL Info found"
+        
+        if root_cid:
+            response_data['Root_CID'] = root_cid
+        else:
+            response_data['Root_CID'] = "No Root CID found"
+        
+        return Response(response_data)
+
+      def post(self, request):
+        config_file_path = r'C:\Users\fguent\Desktop\TESTREG\cft.cfg'
+        partner_name = request.data.get('partner_name')
+
+        with open(config_file_path, 'r') as file:
+            config_content = file.read()
+        
+        ssl_info = extract_ssl_info(config_content, partner_name)
+        root_cid = extract_root_cid(config_content)
+        
+        response_data = {}
+        if ssl_info:
+            response_data['SSL_Info'] = ssl_info
+        else:
+            response_data['SSL_Info'] = "No SSL Info found"
+        
+        if root_cid:
+            response_data['Root_CID'] = root_cid
+        else:
+            response_data['Root_CID'] = "No Root CID found"
+        
+        return Response(response_data)
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
