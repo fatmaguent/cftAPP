@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import TokenRefreshView as BaseTokenRefreshV
 from .serializers import MyTokenObtainPairSerializer  # 
 from .sap import extract_sap, extract_host, read_config_file
 from .certif import extract_ssl_info, extract_root_cid, read_config_file
+from .flux import  get_idf_type_by_partner, read_config_file
 ######################################################################
 class HomeView(APIView):
     permission_classes = (AllowAny,)  
@@ -101,6 +102,34 @@ class CertifView(APIView):
             response_data['Root_CID'] = "No Root CID found"
         
         return Response(response_data)
+      ###################################################################################
+
+class FluxView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        config_file_path = r'C:\Users\fguent\Downloads\tcp_conf_20240208'
+        partner_name = request.query_params.get('partner_name')
+
+        config_content = read_config_file(config_file_path)
+        flux_info = get_idf_type_by_partner(config_content, partner_name)
+
+        if flux_info:
+            return Response({'Flux_Info': flux_info})
+        else:
+            return Response({'error': f"Aucun type de flux trouvé pour le partenaire '{partner_name}'."}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        config_file_path = r'C:\Users\fguent\Downloads\tcp_conf_20240208'
+        partner_name = request.data.get('partner_name')
+
+        config_content = read_config_file(config_file_path)
+        flux_info = get_idf_type_by_partner(config_content, partner_name)
+
+        if flux_info:
+            return Response({'Flux_Info': flux_info})
+        else:
+            return Response({'error': f"Aucun type de flux trouvé pour le partenaire '{partner_name}'."}, status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
